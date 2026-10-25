@@ -3,81 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Mascota - Tesis Veterinaria</title>
-    <!-- Tailwind CSS para diseño moderno -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 font-sans pb-10">
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg flex flex-col">
-        <!-- Header Institucional -->
-        <div class="bg-emerald-700 text-white p-3 text-center font-bold text-xs tracking-wider">
-            TESIS VETERINARIA - IDENTIFICACIÓN QR
-        </div>
+    <title>Identificación de Mascota - {{ mascota.nombre }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f5ef;
+            color: #2b3a33;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 3px solid #b7c4cf;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Estilos fijos para la alerta (sin errores de sintaxis CSS) */
+        .alert-banner {
+            background: #fee2e2;
+            border: 2px dashed #ef4444;
+            color: #dc2626;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .title-container {
+            text-align: right;
+            flex-grow: 1;
+        }
+        .main-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #2b3a33;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            align-items: center;
+        }
+        @media (max-width: 600px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .title-container {
+                text-align: center;
+                margin-top: 10px;
+            }
+            .main-title {
+                justify-content: center;
+            }
+        }
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .photo-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 5px solid #4a7c59;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            background: #eee;
+        }
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .bone-badge {
+            background: #4a7c59;
+            color: white;
+            padding: 6px 25px;
+            border-radius: 30px;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: -16px;
+            z-index: 2;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(74,124,89,0.3);
+            letter-spacing: 1px;
+        }
+        .info-list {
+            margin-top: 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .bg-pink { background-color: #d94e67; }
+        .bg-green { background-color: #4a7c59; }
+        .bg-blue { background-color: #457b9d; }
+        .bg-purple { background-color: #6d597a; }
+        .bg-orange { background-color: #e76f51; }
 
-        <!-- Alerta de Perdido -->
+        .info-text .label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+        }
+        .info-text .value {
+            font-weight: 700;
+            color: #2b3a33;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fdfcfa;
+            border: 2px dashed #cbd5e1;
+            border-radius: 15px;
+            padding: 15px;
+        }
+        .qr-box {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #4a7c59;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .qr-box img {
+            width: 145px;
+            height: 145px;
+            display: block;
+        }
+        .footer-thanks {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #2b3a33;
+        }
+        .actions-bar {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(37,211,102,0.3);
+        }
+        .btn-back {
+            background: #6b7280;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
         {% if mascota.alerta_perdido %}
-        <div class="bg-red-600 text-white text-center py-3 px-4 font-extrabold animate-pulse text-sm">
-            🚨 ¡ESTE PERRO ESTÁ PERDIDO! ¡POR FAVOR COMUNÍCATE!
+        <div class="alert-banner">
+            🚨 ¡ALERTA DE MASCOTA PERDIDA! Por favor comuníquese de inmediato con el tutor.
         </div>
         {% endif %}
 
-        <!-- Foto y Datos Principales -->
-        <div class="p-5 text-center bg-emerald-50/50 border-b border-slate-100">
-            <img src="{{ mascota.foto }}" alt="Foto de {{ mascota.nombre }}" class="w-36 h-36 object-cover rounded-full mx-auto shadow-md border-4 border-white mb-3">
-            <h1 class="text-3xl font-black text-slate-900">{{ mascota.nombre }}</h1>
-            <p class="text-sm text-slate-600 font-medium mt-1">{{ mascota.especie }} • {{ mascota.edad }} • {{ mascota.sexo }}</p>
-            <p class="text-xs text-slate-500 mt-1">Señas: {{ mascota.color }}</p>
+        <div class="header-section">
+            <div style="font-size: 26px;">🐾🐾</div>
+            <div class="title-container">
+                <h1 class="main-title">Identificación de Mascota <span style="font-size:18px;">🐾</span></h1>
+                <div class="subtitle">Si me encuentras, escanea el QR para que pueda volver a casa ♥</div>
+            </div>
         </div>
 
-        <!-- Botones de Contacto -->
-        <div class="p-5 space-y-3">
-            <a href="tel:{{ mascota.telefono }}" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition text-lg flex items-center justify-center gap-2">
-                📞 Llamar al Dueño
-            </a>
-            <a href="https://wa.me/{{ mascota.telefono }}?text=¡Hola! Encontré a {{ mascota.nombre }} mediante su código QR." target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                💬 Escribir por WhatsApp
-            </a>
-        </div>
+        <div class="content-grid">
+            <div class="left-column">
+                <div class="photo-container">
+                    <img src="{{ mascota.foto }}" alt="{{ mascota.nombre }}">
+                </div>
+                <div class="bone-badge">{{ mascota.nombre }}</div>
 
-        <!-- Datos de Emergencia y Ubicación -->
-        <div class="px-5 pb-4">
-            <div class="bg-slate-100 rounded-xl p-4 border border-slate-200">
-                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Datos de Ubicación y Tutor</h2>
-                <p class="text-sm font-semibold text-slate-800">Tutor: {{ mascota.tutor }}</p>
-                <p class="text-sm text-slate-600 mt-1">📍 Zona: {{ mascota.zona }}</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="icon-circle bg-pink">🐾</div>
+                        <div class="info-text">
+                            <span class="label">Edad</span>
+                            <span class="value">{{ mascota.edad or 'No especificada' }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon-circle bg-green">🐶</div>
+                        <div class="info-text">
+                            <span class="label">Especie / Raza</span>
+                            <span class="value">{{ mascota.especie }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon-circle bg-blue">👤</div>
+                        <div class="info-text">
+                            <span class="label">Tutor / Dueña</span>
+                            <span class="value">{{ mascota.tutor }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon-circle bg-purple">📞</div>
+                        <div class="info-text">
+                            <span class="label">Teléfono</span>
+                            <span class="value">{{ mascota.telefono }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon-circle bg-orange">📍</div>
+                        <div class="info-text">
+                            <span class="label">Zona / Dirección</span>
+                            <span class="value">{{ mascota.zona or 'No especificada' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="qr-box">
+                    <img src="/qr/{{ mascota.id }}" alt="Código QR">
+                </div>
+                <div style="font-size: 11px; color: #666; margin-top: 8px; text-align: center;">Escanea con tu cámara</div>
                 
                 {% if mascota.cuidados %}
-                <div class="mt-3 pt-3 border-t border-slate-200">
-                    <span class="text-xs font-bold text-red-600 uppercase">⚠️ Cuidados Médicos Especiales:</span>
-                    <p class="text-sm text-slate-700 mt-1 bg-red-50 p-2 rounded border border-red-100 font-medium">{{ mascota.cuidados }}</p>
+                <div style="margin-top: 12px; width: 100%; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px;">
+                    <b style="color: #047857;">🩺 Cuidados Médicos:</b>
+                    <p style="margin: 4px 0 0 0; color: #4b5563;">{{ mascota.cuidados }}</p>
                 </div>
                 {% endif %}
             </div>
         </div>
 
-        <!-- Historial de Vacunación -->
-        <div class="px-5 pb-6">
-            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Historial de Vacunación (Resumen)</h2>
-                <div class="space-y-2">
-                    {% for vacuno in mascota.vacunas %}
-                    <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-100">
-                        <div>
-                            <p class="text-sm font-bold text-slate-800">{{ vacuno.nombre }}</p>
-                            <p class="text-xs text-slate-500">Vence: {{ vacuno.vencimiento }}</p>
-                        </div>
-                        <span class="px-2.5 py-1 text-xs font-bold rounded-full {% if vacuno.estado == 'Vigente' %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">
-                            {{ vacuno.estado }}
-                         </span>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+        <div class="footer-thanks">
+            ¡Gracias por ayudar! <span style="color:#d94e67;">♥</span>
+            <div style="font-size: 20px; margin-top: 5px;">🐾</div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-auto text-center py-4 text-xs text-slate-400 border-t border-slate-100">
-            Proyecto de Tesis • Medicina Veterinaria
+        <div class="actions-bar">
+            <a href="https://wa.me/{{ mascota.telefono.replace('+', '').replace(' ', '') }}?text=Hola,%20encontré%20a%20{{ mascota.nombre }}%20escaneando%20su%20código%20QR." target="_blank" class="btn-whatsapp">
+                💬 Contactar por WhatsApp
+            </a>
+            <a href="/" class="btn-back">← Volver al Inicio</a>
         </div>
     </div>
 </body>
